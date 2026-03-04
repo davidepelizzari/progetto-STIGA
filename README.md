@@ -25,35 +25,6 @@ namespace WindowsFormsApp1
         private string Token;
         private string Uuid;
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void labelEmail_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Email_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void labelPassword_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Password_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private async void button1_Click(object sender, EventArgs e)
         {
@@ -64,26 +35,7 @@ namespace WindowsFormsApp1
 
             Token = token;
             Uuid = uuid;
-
-
-            if (token != null)
-            {
-                labelEmail.Visible = false;
-                labelPassword.Visible = false;
-                Email.Visible = false;
-                Password.Visible = false;
-                button1.Visible = false;
-                Nome.Visible = true;
-                avviaRobot.Visible = true;
-                fermaRobot.Visible = true;
-                statoRobot.Visible = true;
-                NomeRobot.Visible = true;
-            }
-
-
         }
-
-
 
         private static readonly HttpClient client = new HttpClient();
 
@@ -280,11 +232,6 @@ namespace WindowsFormsApp1
                     return "";
                 }
             }
-        }
-
-        private void statoRobot_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
