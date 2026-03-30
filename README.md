@@ -22,20 +22,73 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
+        private string mail;
+        private string pass;
         private string Token;
         private string Uuid;
 
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelEmail_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Email_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelPassword_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Password_TextChanged(object sender, EventArgs e)
+        {
+
+        }
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            string mail = Email.Text;
-            string pass = Password.Text;
+            string Mail = Email.Text;
+            string Pass = Password.Text;
+
+            mail = Mail;
+            pass = Pass;
             string token = await RetrieveIdToken(mail, pass);
             string uuid = await GetRobot(token);
 
             Token = token;
             Uuid = uuid;
+
+
+            if (token != null)
+            {
+                labelEmail.Visible = false;
+                labelPassword.Visible = false;
+                Email.Visible = false;
+                Password.Visible = false;
+                button1.Visible = false;
+                Nome.Visible = true;
+                avviaRobot.Visible = true;
+                fermaRobot.Visible = true;
+                statoRobot.Visible = true;
+                NomeRobot.Visible = true;
+            }
+
+
         }
+
+
 
         private static readonly HttpClient client = new HttpClient();
 
@@ -63,7 +116,7 @@ namespace WindowsFormsApp1
                 if (response.IsSuccessStatusCode)
                 {
                     FirebaseAuthResponse authResponse = JsonConvert.DeserializeObject<FirebaseAuthResponse>(responseJson);
-                    Nome.Text = Nome.Text + $" {authResponse.displayName}";
+                    Nome.Text = "Buongiorno, " + authResponse.displayName;
                     return authResponse.idToken;
                 }
                 else
@@ -163,21 +216,31 @@ namespace WindowsFormsApp1
 
         private async void avviaRobot_Click(object sender, EventArgs e)
         {
-            string testo = await AvviaRobot();
+            string token = await RetrieveIdToken(mail, pass);
+            string uuid = await GetRobot(token);
+            string testo = await AvviaRobot(uuid, token);
         }
 
-        private async Task<string> AvviaRobot()
+        private async Task<string> AvviaRobot(string uuid, string token)
         {
             using (HttpClient client = new HttpClient())
             {
-                string url = $"https://connectivity-production.stiga.com/api/devices/{Uuid}/command/startsession";
+                string url = $"https://connectivity-production.stiga.com/api/devices/{uuid}/command/startsession";
 
                 try
                 {
                     client.DefaultRequestHeaders.Authorization =
-                        new AuthenticationHeaderValue("Bearer", Token);
+                        new AuthenticationHeaderValue("Bearer", token);
 
-                    HttpResponseMessage response = await client.GetAsync(url);
+                    var requestBody = new
+                    {
+                    };
+
+                    string jsonBody = JsonConvert.SerializeObject(requestBody);
+
+                    var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -200,29 +263,39 @@ namespace WindowsFormsApp1
 
         private async void fermaRobot_Click(object sender, EventArgs e)
         {
-            string stringa = await FermaRobot();
+            string token = await RetrieveIdToken(mail, pass);
+            string uuid = await GetRobot(token);
+            string stringa = await FermaRobot(uuid, token);
         }
 
-        private async Task<string> FermaRobot()
+        private async Task<string> FermaRobot(string uuid, string token)
         {
             using (HttpClient client = new HttpClient())
             {
-                string url = $"https://connectivity-production.stiga.com/api/devices/{Uuid}/command/endsession";
+                string url = $"https://connectivity-production.stiga.com/api/devices/{uuid}/command/endsession";
 
                 try
                 {
                     client.DefaultRequestHeaders.Authorization =
-                        new AuthenticationHeaderValue("Bearer", Token);
+                        new AuthenticationHeaderValue("Bearer", token);
 
-                    HttpResponseMessage response = await client.GetAsync(url);
-
-                    if (response != null)
+                    var requestBody = new
                     {
+                    };
+
+                    string jsonBody = JsonConvert.SerializeObject(requestBody);
+
+                    var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        statoRobot.Text = "Stato: in attesa";
                         return "";
                     }
                     else
                     {
-                        statoRobot.Text = "Stato: in attesa";
                         return "";
                     }
                 }
@@ -233,6 +306,10 @@ namespace WindowsFormsApp1
                 }
             }
         }
+
+        private void statoRobot_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
-
